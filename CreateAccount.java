@@ -332,7 +332,82 @@ public class CreateAccount extends javax.swing.JFrame {
         lg.setLocationRelativeTo(null);
         lg.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.dispose();
-    }                                        
+    } 
+    
+    //checks if the username is already in the database
+    public boolean checkUsername(String username){
+        PreparedStatement ps;
+        ResultSet rs;
+        boolean checkUser = false;
+        String query = "SELECT* FROM 'Users' WHERE 'UserName ='?' ";
+        try{
+           ps = MyConnection.getConnection().prepareStatement(query);
+           ps.setString(1,username);
+           rs = ps.executeQuery();
+           if(rs.next()){
+               checkUser = true;
+           }
+        }
+        catch(SQLException ex){
+           java.util.logging.Logger.getLogger(CreateAccount.class.getName()).log(Level.SEVERE, null, ex); 
+        }
+        return checkUser;
+    }
+    
+    
+    
+    public boolean verifyPassword(String password)
+    {
+        int specialCharacters = 0;
+        int digitCount=0;
+        int upperCaseChars = 0;
+        int lowerCaseChars = 0;
+        
+        //password must be at least 8 characters long
+        if(password.length() < 8)
+        {
+            return false;
+        } 
+        else
+        {
+            for(int i=0 ; i < password.length(); i++)  
+            {
+                char c = password.charAt(i);
+                if(Character.isUpperCase(c))
+                {
+                   upperCaseChars++;
+                }
+                if(Character.isLowerCase(c))
+                {    
+                   lowerCaseChars++; 
+                }
+              
+                if(Character.isDigit(c))
+                {
+                    digitCount++;
+                }
+                Pattern p = Pattern.compile("[^A-Za-z0-9]*");
+                Matcher m = p.matcher(password);  
+                boolean b = m.find();
+                if(b)
+                {
+                    specialCharacters++;
+                } 
+                
+            } 
+            if(upperCaseChars >= 1 && lowerCaseChars >=1 && digitCount >=1 && specialCharacters >=1)
+            {
+                return true;
+            } 
+            else
+            {
+                return false;
+            }     
+            //for the password to be valid it should have a least one uppercase letter,
+            //one lowercase letter,at least one special character and at least one digit
+                 
+        }
+    }  
 
     /**
      * @param args the command line arguments
