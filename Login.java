@@ -215,11 +215,31 @@ public class Login extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {                                         
         // TODO add your handling code here:
-        Login lg = new Login();
-        lg.setVisible(true);
-        lg.pack();
-        lg.setLocationRelativeTo(null);
-        lg.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        PreparedStatement ps;
+        ResultSet rs;
+        String uname = jTextField1.getText();
+        String pass = String.valueOf(jPasswordField1.getPassword());
+        String query = "SELECT* FROM 'Users' WHERE 'UserName' = '?' AND 'Password' = '?' ";
+        try{
+           ps = MyConnection.getConnection().prepareStatement(query);
+           ps.setString(1,uname);
+           ps.setString(2, pass);
+           rs = ps.executeQuery();
+           if(rs.next()){
+               HomeFrame mf = new HomeFrame();
+               mf.setVisible(true);
+               mf.pack();
+               mf.setLocationRelativeTo(null);
+               mf.setExtendedState(JFrame.MAXIMIZED_BOTH);
+               mf.jLabel1.setText("Welcome <"+uname+"");
+           }
+           else{
+               JOptionPane.showMessageDialog(null,"Incorrect Username or Password","Login Failed",2);
+           }
+        }
+        catch(SQLException ex){
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }                                        
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {                                         
