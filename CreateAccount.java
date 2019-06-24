@@ -289,17 +289,43 @@ public class CreateAccount extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {                                         
         // TODO add your handling code here:
-        CreateAccount newAcc = new CreateAccount();
-        newAcc.setVisible(true);
-        newAcc.pack();
-        newAcc.setLocationRelativeTo(null);
-        newAcc.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.dispose();
-        try{
-
+        String uname =  jTextField1.getText();
+        String pass = String.valueOf(jPasswordField3.getPassword());
+        String rePass = String.valueOf(jPasswordField1.getPassword());
+        String fname = jTextField5.getText();
+        String lname = jTextField4.getText();
+        String em = jTextField2.getText();
+        
+        if(uname.equals("")){
+            JOptionPane.showMessageDialog(null,"Add a Username");
         }
-        catch(Exception ex){
-
+        else if(!verifyPassword(pass)){
+            JOptionPane.showMessageDialog(null, "Add a Password");
+        }
+        else if(!pass.equals(rePass)){
+            JOptionPane.showMessageDialog(null, "Retype Password");
+        }
+        else if(checkUsername(uname)){
+            JOptionPane.showMessageDialog(null, "This Username Already Exists");
+        }
+        else{
+        
+            PreparedStatement ps;
+            String query = "INSERT INTO 'Users'('UserName','Password','FirstName','LastName','email')VALUES(?,?,?,?,?)";
+            try {
+                ps = MyConnection.getConnection().prepareStatement(query);
+                ps.setString(1, uname);
+                ps.setString(2, pass);
+                ps.setString(3, fname);
+                ps.setString(4, lname);
+                ps.setString(5, em);
+                ps.executeUpdate();
+                if(ps.executeUpdate() > 0){
+                    JOptionPane.showMessageDialog(null,"New user add");
+                }   
+            } catch (SQLException ex) {
+                java.util.logging.Logger.getLogger(CreateAccount.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }                                        
 
